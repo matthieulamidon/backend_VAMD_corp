@@ -2,7 +2,7 @@
 
 ## 📂 Structure des fichiers
 
-````text
+```text
 📦 backend/
 ├── 📁 src/
 │   ├── 📁 config/               # Configuration (CORS, rate limit, etc.)
@@ -59,7 +59,7 @@
 ├── .env                         # Variables d’environnement
 ├── fichiers de config à ne pas toucher
 └── README.md
-\\\
+```
 
 ## 📜 Règles du dépôt
 
@@ -71,7 +71,7 @@
 ## 🌍 Accès au serveur web
 
 Le serveur est déployé ici :
-👉 [ https://backend-vamd-corp.onrender.com]( https://backend-vamd-corp.onrender.com)
+👉 [ https://backend-vamd-corp.onrender.com](https://backend-vamd-corp.onrender.com)
 
 ⚠️ **Cold Start** (plan gratuit) :
 
@@ -84,7 +84,7 @@ Après un `git pull` :
 
 ```bash
 npm install
-````
+```
 
 Créer un fichier `.env` avec à l’intérieur :
 
@@ -103,7 +103,7 @@ Avant de pousser votre code, exécutez :
 ```bash
 npm run lint
 npm run build
-npm run preview
+npm run start
 ```
 
 ## 🚀 Workflow Git
