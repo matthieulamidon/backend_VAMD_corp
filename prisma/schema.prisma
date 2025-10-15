@@ -15,18 +15,151 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+// ========================= ENUMS =========================
 
-model User {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
-  posts Post[]
+enum JeuxEquipe {
+  FIFA
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
+enum Poste {
+  DEFENCEUR
+  MILIEU
+  
+}
+
+enum SousRole {
+  TITULAIRE
+  REMPLACANT
+}
+
+enum DroitEnum {
+  ADMIN
+  COACH
+  USER
+}
+
+enum SexeEnum {
+  HOMME
+  FEMME
+  AUTRE
+}
+
+enum Icone {
+  AVATAR1
+  AVATAR2
+  AVATAR3
+}
+
+// ========================= MODELS =========================
+
+// ---- TABLE User ----
+model User {
+  id_user         Int        @id @default(autoincrement())
+  nom             String     
+  prenom          String     
+  date_naissance  DateTime
+  email           String     @unique
+  password        String     
+  sexe            SexeEnum?
+  pseudo          String?    
+  id_droit        Int?
+  icone           Icone?
+  description     String?    
+
+  // Relations
+  droit           Droit?     @relation(fields: [id_droit], references: [id_droit])
+  participations  Participation[]
+  userEquipes     UserEquipe[]
+  evenements      Evenement[] @relation("EvenementCoach")
+
+  @@map("user")
+}
+
+// ---- TABLE Droit ----
+model Droit {
+  id_droit   Int     @id @default(autoincrement())
+  droit      DroitEnum
+  id_event   Int?
+
+  // Relations
+  event      Evenement? @relation(fields: [id_event], references: [id_event])
+  users      User[]
+
+  @@map("droit")
+}
+
+// ---- TABLE Equipe ----
+model Equipe {
+  id_equipe    Int         @id @default(autoincrement())
+  nom_equipe   String      
+  jeux_equipe  JeuxEquipe
+  score_equipe Int?
+
+  // Relations
+  userEquipes         UserEquipe[]
+  participationEquipe ParticipationEquipe[]
+
+  @@map("equipe")
+}
+
+// ---- TABLE User_Equipe (association User ↔ Equipe) ----
+model UserEquipe {
+  id_user    Int
+  id_equipe  Int
+  poste      Poste
+  sous_role  SousRole?
+
+  // Relations
+  user   User   @relation(fields: [id_user], references: [id_user])
+  equipe Equipe @relation(fields: [id_equipe], references: [id_equipe])
+
+  @@id([id_user, id_equipe])
+  @@map("user_equipe")
+}
+
+// ---- TABLE Evenement ----
+model Evenement {
+  id_event         Int       @id @default(autoincrement())
+  type_event       String    
+  date_heure_debut DateTime
+  date_heure_fin   DateTime
+  lieu             String    
+  description      String?   
+  titre_event      String    
+  id_user          Int?      
+
+  // Relations
+  coach            User?     @relation("EvenementCoach", fields: [id_user], references: [id_user])
+  droits           Droit[]
+  participations   Participation[]
+  participationEquipe ParticipationEquipe[]
+
+  @@map("evenement")
+}
+
+// ---- TABLE Participation (User ↔ Evenement) ----
+model Participation {
+  id_event Int
+  id_user  Int
+  droit    DroitEnum
+
+  // Relations
+  user     User      @relation(fields: [id_user], references: [id_user])
+  event    Evenement @relation(fields: [id_event], references: [id_event])
+
+  @@id([id_event, id_user])
+  @@map("participation")
+}
+
+// ---- TABLE Participation_Equipe (Equipe ↔ Evenement) ----
+model ParticipationEquipe {
+  id_equipe Int
+  id_event  Int
+
+  // Relations
+  equipe Equipe    @relation(fields: [id_equipe], references: [id_equipe])
+  event  Evenement @relation(fields: [id_event], references: [id_event])
+
+  @@id([id_equipe, id_event])
+  @@map("participation_equipe")
 }
