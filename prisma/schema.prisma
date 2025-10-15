@@ -54,6 +54,7 @@ enum Icone {
 
 // ---- TABLE User ----
 model User {
+<<<<<<< HEAD
   id_user         Int        @id @default(autoincrement())
   nom             String     
   prenom          String     
@@ -163,3 +164,14 @@ model ParticipationEquipe {
   @@id([id_equipe, id_event])
   @@map("participation_equipe")
 }
+=======
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("USER") // ex: USER, ADMIN
+  subRole   String?  // facultatif, ex: "manager", "editor"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+>>>>>>> origin/main
