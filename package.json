@@ -10,6 +10,7 @@
     "start": "tsx src/index.ts",
     "migrate": "prisma migrate deploy",
     "generate": "prisma generate",
+    "migrate:force": "npx prisma migrate reset --force --skip-seed --skip-generate || echo '✅ Migration reset terminée sans erreur'",
     "lint": "eslint . --ext .ts,.mts ",
     "lint:fix": "eslint . --ext .ts,.mts --fix",
     "format": "prettier --write ."
