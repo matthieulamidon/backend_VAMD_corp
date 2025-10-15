@@ -9,7 +9,7 @@
     "build": "tsc",
     "start": "tsx src/index.ts",
     "migrate": "prisma migrate deploy",
-    "postinstall": "prisma generate",
+    "generate": "prisma generate",
     "lint": "eslint . --ext .ts,.mts ",
     "lint:fix": "eslint . --ext .ts,.mts --fix",
     "format": "prettier --write ."
