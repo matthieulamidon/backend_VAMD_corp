@@ -2,10 +2,18 @@ import express from "express";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
+import cors from "cors";
 
 export const startServer = () => {
   const app = express();
   app.use(bodyParser.json());
+
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL || "http://localhost:5173", // URL du frontend car sinon CORS bloque I HATE YOU CORS !!!
+      credentials: true, // les cookies
+    })
+  );
 
   app.use("/api/auth", authRoutes);
   app.use("/api/admin", adminRoutes);

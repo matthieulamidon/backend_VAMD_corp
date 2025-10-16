@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient, User } from "@prisma/client";
 import argon2 from "argon2";
-import { signToken } from "../utils/jwt";
+import { setAuthCookie, signToken, verifyAuthCookie } from "../utils/jwt";
 
 const prisma = new PrismaClient();
 
@@ -26,7 +26,7 @@ export async function register(req: Request, res: Response) {
 
     const hash = await argon2.hash(password);
 
-    // Prisma connaît tous les champs de ton modèle User, donc plus d’erreur ici :
+    // et ou on bosse avec TS donc il faut typer correctement sinon tu vas pleurer
     const user = await prisma.user.create({
       data: {
         email,
@@ -62,7 +62,9 @@ export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    return res
+      .status(400)
+      .json({ message: "l'email et/ou le mots de passe est/sont invalide " });
   }
 
   try {
@@ -72,12 +74,12 @@ export async function login(req: Request, res: Response) {
     })) as User | null;
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "les cookies sont invalide" });
     }
 
     const valid = await argon2.verify(user.password, password);
     if (!valid) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "les cookies sont invalide" });
     }
 
     const token = signToken({
@@ -86,8 +88,15 @@ export async function login(req: Request, res: Response) {
       subRole: user.subRole,
     });
 
+    const tokenCookies = setAuthCookie(res, {
+      id: user.id,
+      username: user.email,
+      role: user.role,
+    });
+
     return res.json({
       token,
+      tokenCookies,
       user: {
         id: user.id,
         email: user.email,
@@ -98,5 +107,14 @@ export async function login(req: Request, res: Response) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
+  }
+}
+
+export async function me(req: Request, res: Response) {
+  try {
+    const decoded = verifyAuthCookie(req);
+    res.json({ message: "Bienvenue !", user: decoded });
+  } catch {
+    res.status(401).json({ message: "Non autorisé" });
   }
 }
