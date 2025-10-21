@@ -25,8 +25,8 @@ export function setAuthCookie(res: Response, payload: object) {
   // cookie sécurisé
 
   res.cookie("auth_token", token, {
-    httpOnly: true, // inaccessible au JS
-    secure: true, // HTTPS only
+    httpOnly: false, // inaccessible au JS
+    secure: false, // HTTPS only
     sameSite: "strict", // protège CSRF
     maxAge: 60 * 60 * 1000, // 1h
   });
@@ -36,7 +36,9 @@ export function setAuthCookie(res: Response, payload: object) {
 
 // Permet de vérifier le token JWT depuis le cookie
 export function verifyAuthCookie(req: Request) {
+  console.log("Verifying auth cookie for request:", req.method, req.url);
   const token = req.cookies?.auth_token;
+  console.log("Auth cookie token:", token, req.cookies);
   if (!token) throw new Error("No token provided");
   return jwt.verify(token, JWT_SECRET);
 }

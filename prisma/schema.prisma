@@ -18,23 +18,37 @@ generator client {
 // ========================= ENUMS =========================
 
 enum JeuxEquipe {
-  FIFA
+  LEAGUEOFLEGENDES
+  VALORANT
+  FORTNITE
 }
 
 enum Poste {
-  DEFENCEUR
-  MILIEU
-  
+  FORTNITE   // IL N'y a pas de roles car ce jeu manque de stratégie  
+  TOPLANER   // LOL
+  MIDLANER   // LOL
+  BOTLANER   // LOL
+  JUNGLER    // LOL
+  SUPORT     // LOL
+  DUELISTS   // VALO
+  SENTINELS  // VALO
+  INITIATORS // VALO
+  CONTROLLERS// VALO 
+  POLYVALENT // VALO il y a quatre roles dans valo mais 5 joueur dont un qui change de role en fonction de la map
 }
 
 enum SousRole {
   TITULAIRE
   REMPLACANT
+  COACH
+  CHEFDEQUIPE
+  INSCRIPTION // dans le process d'INSCRIPTION il seul le coach le voie
 }
 
 enum DroitEnum {
   ADMIN
   COACH
+  JOUEUR
   USER
 }
 
@@ -54,18 +68,19 @@ enum Icone {
 
 // ---- TABLE User ----
 model User {
-<<<<<<< HEAD
   id_user         Int        @id @default(autoincrement())
-  nom             String     
-  prenom          String     
+  nom             String?     
+  prenom          String?     
   date_naissance  DateTime
   email           String     @unique
   password        String     
   sexe            SexeEnum?
-  pseudo          String?    
+  pseudo          String     @unique
   id_droit        Int?
-  icone           Icone?
+  icone           Icone      @default(AVATAR1)
   description     String?    
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   droit           Droit?     @relation(fields: [id_droit], references: [id_droit])
@@ -164,14 +179,3 @@ model ParticipationEquipe {
   @@id([id_equipe, id_event])
   @@map("participation_equipe")
 }
-=======
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      String   @default("USER") // ex: USER, ADMIN
-  subRole   String?  // facultatif, ex: "manager", "editor"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
->>>>>>> origin/main

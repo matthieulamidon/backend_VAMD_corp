@@ -3,10 +3,12 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 export const startServer = () => {
   const app = express();
   app.use(bodyParser.json());
+  app.use(cookieParser());
 
   app.use(
     cors({

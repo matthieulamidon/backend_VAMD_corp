@@ -6,50 +6,81 @@ import { setAuthCookie, signToken, verifyAuthCookie } from "../utils/jwt";
 const prisma = new PrismaClient();
 
 export async function register(req: Request, res: Response) {
-  const { email, password, role, subRole } = req.body;
+  const { pseudo, email, password, date_naissance } = req.body;
+  const role = "USER";
+
   console.log(
-    "Enregistrement de l'utilisateur utilise ses informations:",
+    "Enregistrement de l'utilisateur avec ces informations:",
     req.body
   );
 
-  if (!email || !password) {
+  // Vérification des champs obligatoires
+  if (!pseudo || !email || !password || !date_naissance) {
+    return res.status(400).json({
+      message:
+        "Pseudo, email, mot de passe et date de naissance sont obligatoires",
+    });
+  }
+
+  // Vérification du format de la date
+  const dateNaissanceObj = new Date(date_naissance);
+  if (isNaN(dateNaissanceObj.getTime())) {
+    return res.status(400).json({
+      message: "Date de naissance invalide. Format attendu : YYYY-MM-DD",
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ message: "Email invalide" });
+  }
+
+  // Vérification mot de passe (exemple : min 6 caractères)
+  if (password.length < 6) {
     return res
       .status(400)
-      .json({ message: "Email et le mots de passe sont obligatoire" });
+      .json({ message: "Le mot de passe doit contenir au moins 6 caractères" });
   }
 
   try {
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      return res.status(409).json({ message: "Cette email est déjà utiliser" });
+      return res.status(409).json({ message: "Cet email est déjà utilisé" });
     }
 
     const hash = await argon2.hash(password);
 
-    // et ou on bosse avec TS donc il faut typer correctement sinon tu vas pleurer
+    const droitUser = await prisma.droit.findFirst({ where: { droit: role } });
+    if (!droitUser) {
+      throw new Error(
+        " roit USER introuvable. Vérifie que la BDD a bien été npm run seed."
+      );
+    }
+
     const user = await prisma.user.create({
       data: {
+        pseudo,
         email,
+        date_naissance: dateNaissanceObj,
         password: hash,
-        role: role || "USER",
-        subRole: subRole || null,
+        id_droit: droitUser.id_droit,
       },
     });
 
-    // On s'assure que TS connaît bien le type complet
     const token = signToken({
-      userId: user.id,
-      role: user.role,
-      subRole: user.subRole,
+      userId: user.id_user,
+      role: user.id_droit,
+      pseudo: user.pseudo,
     });
 
     return res.status(201).json({
       token,
       user: {
-        id: user.id,
+        id: user.id_user,
         email: user.email,
-        role: user.role,
-        subRole: user.subRole,
+        role: user.id_droit,
+        pseudo: user.pseudo,
+        date_naissance: user.date_naissance,
       },
     });
   } catch (err) {
@@ -83,25 +114,25 @@ export async function login(req: Request, res: Response) {
     }
 
     const token = signToken({
-      userId: user.id,
-      role: user.role,
-      subRole: user.subRole,
+      userId: user.id_user,
+      role: user.id_droit,
+      pseudo: user.pseudo,
     });
 
     const tokenCookies = setAuthCookie(res, {
-      id: user.id,
-      username: user.email,
-      role: user.role,
+      userId: user.id_user,
+      role: user.id_droit,
+      pseudo: user.pseudo,
     });
 
     return res.json({
       token,
       tokenCookies,
       user: {
-        id: user.id,
+        id: user.id_user,
         email: user.email,
-        role: user.role,
-        subRole: user.subRole,
+        role: user.id_droit,
+        pseudo: user.pseudo,
       },
     });
   } catch (err) {
@@ -112,6 +143,11 @@ export async function login(req: Request, res: Response) {
 
 export async function me(req: Request, res: Response) {
   try {
+    console.log(
+      "Récupération des informations de l'utilisateur pour la requête:",
+      req.method,
+      req.url
+    );
     const decoded = verifyAuthCookie(req);
     res.json({ message: "Bienvenue !", user: decoded });
   } catch {
