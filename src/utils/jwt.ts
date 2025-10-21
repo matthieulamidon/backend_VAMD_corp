@@ -25,8 +25,8 @@ export function setAuthCookie(res: Response, payload: object) {
   // cookie sécurisé
 
   res.cookie("auth_token", token, {
-    httpOnly: false, // inaccessible au JS
-    secure: false, // HTTPS only
+    httpOnly: true, // inaccessible au JS
+    secure: process.env.MODE_PRODUCTION === "production", // HTTPS only
     sameSite: "strict", // protège CSRF
     maxAge: 60 * 60 * 1000, // 1h
   });
