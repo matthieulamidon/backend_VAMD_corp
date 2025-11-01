@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import argon2 from "argon2";
 import { setAuthCookie, signToken, verifyAuthCookie } from "../utils/jwt";
 
@@ -24,7 +24,7 @@ export async function register(req: Request, res: Response) {
 
   // Vérification du format de la date
   const dateNaissanceObj = new Date(date_naissance);
-  if (isNaN(dateNaissanceObj.getTime())) {
+  if (Number.isNaN(dateNaissanceObj.getTime())) {
     return res.status(400).json({
       message: "Date de naissance invalide. Format attendu : YYYY-MM-DD",
     });
@@ -100,9 +100,9 @@ export async function login(req: Request, res: Response) {
 
   try {
     // On force le typage complet ici pour éviter toute confusion TS
-    const user = (await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
-    })) as User | null;
+    });
 
     if (!user) {
       return res.status(401).json({ message: "les cookies sont invalide" });
@@ -145,8 +145,9 @@ export async function me(req: Request, res: Response) {
   try {
     console.log(
       "Récupération des informations de l'utilisateur pour la requête:",
-      req.method,
-      req.url
+      //req.method,
+      //req.url,
+      req
     );
     const decoded = verifyAuthCookie(req);
     res.json({ message: "Bienvenue !", user: decoded });
