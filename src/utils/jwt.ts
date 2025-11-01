@@ -26,11 +26,11 @@ export function setAuthCookie(res: Response, payload: object) {
 
   res.cookie("auth_token", token, {
     httpOnly: false, //true, // inaccessible au JS
-    secure: false, //process.env.MODE_PRODUCTION === "production", // HTTPS only
-    sameSite: "lax", //process.env.NODE_ENV === "production" ? "strict" : "none", // protège CSRF
+    secure: process.env.MODE_PRODUCTION === "production", // HTTPS only
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // protège CSRF
     maxAge: 60 * 60 * 1000, // 1h
   });
-
+  //postgresql://postgres.kdmrunzyqdidcdrpcxyl:Ct5y.KS/[&-U7ijb@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
   return token;
 }
 
