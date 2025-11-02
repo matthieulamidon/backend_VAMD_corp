@@ -13,7 +13,7 @@ export const startServer = () => {
 
   app.use(
     cors({
-      origin: process.env.FRONTEND_URL || "http://localhost:5173po", // URL du frontend car sinon CORS bloque I HATE YOU CORS !!!
+      origin: process.env.FRONTEND_URL || "http://localhost:5173", // URL du frontend car sinon CORS bloque I HATE YOU CORS !!!
       credentials: true, // les cookies
     })
   );

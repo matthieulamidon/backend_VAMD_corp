@@ -25,9 +25,10 @@ export function setAuthCookie(res: Response, payload: object) {
   // cookie sécurisé
 
   res.cookie("auth_token", token, {
-    httpOnly: false, //true, // inaccessible au JS
+    httpOnly: true, // inaccessible au JS
     secure: process.env.MODE_PRODUCTION === "production", // HTTPS only
-    sameSite: "lax", //process.env.NODE_ENV === "production" ? "strict" : "lax", // protège CSRF
+    sameSite: "none", //process.env.NODE_ENV === "production" ? "strict" : "lax", // protège CSRF
+    path: "/",
     maxAge: 60 * 60 * 1000, // 1h
   });
   //postgresql://postgres.kdmrunzyqdidcdrpcxyl:Ct5y.KS/[&-U7ijb@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
