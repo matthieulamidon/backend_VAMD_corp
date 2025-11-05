@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import argon2 from "argon2";
-import { setAuthCookie, signToken, verifyAuthCookie } from "../utils/jwt";
+import {
+  clearAuthCookie,
+  setAuthCookie,
+  signToken,
+  verifyAuthCookie,
+} from "../utils/jwt";
 
 const prisma = new PrismaClient();
 
+/* register: permet de generer un nouvelle utilisateur */
 export async function register(req: Request, res: Response) {
   const { pseudo, email, password, date_naissance } = req.body;
   const role = "USER";
@@ -53,10 +59,11 @@ export async function register(req: Request, res: Response) {
     const droitUser = await prisma.droit.findFirst({ where: { droit: role } });
     if (!droitUser) {
       throw new Error(
-        " roit USER introuvable. Vérifie que la BDD a bien été npm run seed."
+        " droit USER introuvable. Vérifie que la BDD a bien été npm run seed."
       );
     }
 
+    console.log("Droit utilisateur trouvé:", droitUser);
     const user = await prisma.user.create({
       data: {
         pseudo,
@@ -89,6 +96,7 @@ export async function register(req: Request, res: Response) {
   }
 }
 
+/* login: permet de generer cookie d'authentification */
 export async function login(req: Request, res: Response) {
   const { email, password } = req.body;
 
@@ -99,7 +107,6 @@ export async function login(req: Request, res: Response) {
   }
 
   try {
-    // On force le typage complet ici pour éviter toute confusion TS
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -119,6 +126,7 @@ export async function login(req: Request, res: Response) {
       pseudo: user.pseudo,
     });
 
+    //créé le cookie d'authentification
     const tokenCookies = setAuthCookie(res, {
       userId: user.id_user,
       role: user.id_droit,
@@ -141,6 +149,7 @@ export async function login(req: Request, res: Response) {
   }
 }
 
+/* me: verifie le cookie d'authentification */
 export async function me(req: Request, res: Response) {
   try {
     console.log(
@@ -153,5 +162,16 @@ export async function me(req: Request, res: Response) {
     res.json({ message: "Bienvenue !", user: decoded });
   } catch {
     res.status(401).json({ message: "Non autorisé" });
+  }
+}
+
+/* Logout: supprime le cookie d'authentification */
+export async function logout(req: Request, res: Response) {
+  try {
+    clearAuthCookie(res);
+    res.json({ message: "Déconnexion réussie" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur lors de la déconnexion" });
   }
 }

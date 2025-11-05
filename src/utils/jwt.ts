@@ -35,11 +35,19 @@ export function setAuthCookie(res: Response, payload: object) {
   return token;
 }
 
-// Permet de vérifier le token JWT depuis le cookie
+// Permet de vérifier le token JWT depuis le cookie et retourne le pseudo, id et role de l'utilisateur
 export function verifyAuthCookie(req: Request) {
-  // console.log("Verifying auth cookie for request:", req.method, req.url);
   const token = req.cookies?.auth_token;
   console.log("Auth cookie token:", token, req.cookies);
   if (!token) throw new Error("No token provided");
   return jwt.verify(token, JWT_SECRET);
+}
+
+// Permet de supprimer le cookie d'authentification
+export function clearAuthCookie(res: Response) {
+  res.clearCookie("auth_token", {
+    httpOnly: true,
+    secure: process.env.MODE_PRODUCTION === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
 }
