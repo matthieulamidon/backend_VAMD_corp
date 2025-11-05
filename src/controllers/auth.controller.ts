@@ -98,26 +98,39 @@ export async function register(req: Request, res: Response) {
 
 /* login: permet de generer cookie d'authentification */
 export async function login(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const { emailOrPseudo, password } = req.body;
 
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "l'email et/ou le mots de passe est/sont invalide " });
+  if (!emailOrPseudo || !password) {
+    return res.status(400).json({
+      message: "l'email/pseudo et/ou le mots de passe est/sont invalide ",
+    });
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let user: any | null = null;
+    if (emailRegex.test(emailOrPseudo)) {
+      user = await prisma.user.findUnique({
+        where: { email: emailOrPseudo },
+      });
+    } else {
+      user = await prisma.user.findUnique({
+        where: { pseudo: emailOrPseudo },
+      });
+    }
 
     if (!user) {
-      return res.status(401).json({ message: "les cookies sont invalide" });
+      return res.status(401).json({
+        message: "l'email/pseudo et/ou le mots de passe est/sont invalide 2",
+      });
     }
 
     const valid = await argon2.verify(user.password, password);
     if (!valid) {
-      return res.status(401).json({ message: "les cookies sont invalide" });
+      return res.status(401).json({
+        message: "erreur serveur les cookies ne peuvent être générer",
+      });
     }
 
     const token = signToken({
