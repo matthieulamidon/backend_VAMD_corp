@@ -54,6 +54,11 @@ export async function register(req: Request, res: Response) {
       return res.status(409).json({ message: "Cet email est déjà utilisé" });
     }
 
+    const existing2 = await prisma.user.findUnique({ where: { pseudo } });
+    if (existing2) {
+      return res.status(409).json({ message: "Ce Pseudo est déjà utilisé" });
+    }
+
     const hash = await argon2.hash(password);
 
     const droitUser = await prisma.droit.findFirst({ where: { droit: role } });

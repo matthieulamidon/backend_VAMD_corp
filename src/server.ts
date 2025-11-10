@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import infoUserRoutes from "./routes/infoUser.routes";
+import inscryptionEquipeRoutes from "./routes/inscryptionEquipe.routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -22,8 +23,9 @@ export const startServer = () => {
   app.use("/api/auth", authRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api/user", infoUserRoutes);
+  app.use("/api/equipeInscryption", inscryptionEquipeRoutes);
 
-  app.use((err: any, req: any, res: any, next: any) => {
+  app.use((err: any, req: any, res: any) => {
     console.error("🔥 Erreur capturée :", err);
     res
       .status(err.status || 500)

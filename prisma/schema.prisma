@@ -107,7 +107,7 @@ model Droit {
 // ---- TABLE Equipe ----
 model Equipe {
   id_equipe    Int         @id @default(autoincrement())
-  nom_equipe   String      
+  nom_equipe   String      @unique
   jeux_equipe  JeuxEquipe
   score_equipe Int?
 
