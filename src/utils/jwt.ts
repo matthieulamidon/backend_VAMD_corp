@@ -6,18 +6,18 @@ const JWT_SECRET: Secret = process.env.JWT_SECRET || "dev_secret";
 const JWT_EXPIRES_IN: JwtTimeString = (process.env.JWT_EXPIRES_IN ||
   "1h") as JwtTimeString;
 
-// permet de créer un token JWT avec un payload donné
+/* signToken: permet de créer un token JWT avec un payload donné */
 export function signToken(payload: object): string {
   const options: SignOptions = { expiresIn: JWT_EXPIRES_IN };
   return jwt.sign(payload, JWT_SECRET, options);
 }
 
-// permet de vérifier et décoder un token JWT
+/* verifyToken: permet de vérifier et décoder un token JWT */
 export function verifyToken(token: string) {
   return jwt.verify(token, JWT_SECRET);
 }
 
-// Permet de créer un cookie sécurisé avec le token JWT
+/* setAuthCookie: Permet de créer un cookie sécurisé avec le token JWT */
 export function setAuthCookie(res: Response, payload: object) {
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
   const role = (payload as any).role || "USER";
@@ -26,16 +26,15 @@ export function setAuthCookie(res: Response, payload: object) {
 
   res.cookie("auth_token", token, {
     httpOnly: true, // inaccessible au JS
-    secure: process.env.MODE_PRODUCTION === "production", // HTTPS only
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // protège CSRF
+    secure: process.env.MODE_PRODUCTION === "production", // HTTPS only en production sinon false
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // protège CSRF lax si tu es en prod car on est sur le localhost en dev sinon none car le frontend est sur Versell et le backend sur render
     path: "/",
     maxAge: 60 * 60 * 1000, // 1h
   });
-  //postgresql://postgres.kdmrunzyqdidcdrpcxyl:Ct5y.KS/[&-U7ijb@aws-1-eu-north-1.pooler.supabase.com:5432/postgres
   return token;
 }
 
-// Permet de vérifier le token JWT depuis le cookie et retourne le pseudo, id et role de l'utilisateur
+/* verifyAuthCookie: Permet de vérifier le token JWT depuis le cookie et retourne le pseudo, id et role de l'utilisateur */
 export function verifyAuthCookie(req: Request) {
   const token = req.cookies?.auth_token;
   console.log("Auth cookie token:", token, req.cookies);
@@ -43,7 +42,7 @@ export function verifyAuthCookie(req: Request) {
   return jwt.verify(token, JWT_SECRET);
 }
 
-// Permet de supprimer le cookie d'authentification
+/* clearAuthCookie : Permet de supprimer le cookie d'authentification */
 export function clearAuthCookie(res: Response) {
   res.clearCookie("auth_token", {
     httpOnly: true,

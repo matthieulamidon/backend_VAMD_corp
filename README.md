@@ -4,45 +4,33 @@
 
 ```text
 📦 backend/
+├── 📁 prisma/
+│   ├── schema.prisma            # Schéma Prisma
+│   ├── seed.ts                  # Script de seed de la base avec les initialisations de la bdd
+│   └── migrations/              # Générées automatiquement
+│
 ├── 📁 src/
 │   ├── 📁 config/               # Configuration (CORS, rate limit, etc.)
-│   │   ├── cors.config.ts
-│   │   ├── env.config.ts
-│   │   ├── rateLimit.config.ts
-│   │   └── logger.config.ts
-│   │
-│   ├── 📁 database/
-│   │   ├── prismaClient.ts      # Initialisation du client Prisma
-│   │   └── seed.ts              # (optionnel) Script de seed de la base
 │   │
 │   ├── 📁 middleware/
 │   │   ├── auth.middleware.ts   # Vérification du JWT
-│   │   ├── rbac.middleware.ts   # Contrôle d’accès par rôle
+│   │   ├── role.middleware.ts   # Contrôle d’accès par rôle
 │   │   ├── error.middleware.ts  # Gestion centralisée des erreurs
-│   │   └── rateLimiter.middleware.ts
+│   │   └── verificationExistance.middleware.ts # Verifie si les emails, pasword, ... existe déjà dans la bdd
 │   │
-│   ├── 📁 modules/              # Chaque module = logique métier (feature)
-│   │   ├── 📁 auth/
-│   │   │   ├── auth.controller.ts
-│   │   │   ├── auth.service.ts
-│   │   │   ├── auth.routes.ts
-│   │   │   ├── auth.types.ts
-│   │   │   └── auth.utils.ts    # Ex : génération JWT, validation token, etc.
-│   │   │
-│   │   ├── 📁 user/
-│   │   │   ├── user.controller.ts
-│   │   │   ├── user.service.ts
-│   │   │   ├── user.routes.ts
-│   │   │   └── user.types.ts
-│   │   │
-│   │   └── (autres modules : product, post, etc.)
+│   ├── 📁 controller/              # Chaque module = logique métier (feature)
 │   │
+│   │   │── auth.controller.ts
+│   │   │── equipeInscryption.controller.ts
+│   │
+│   ├── 📁 routes/
+│   │   ├── admin.routes.ts
+│   │   ├── auth.routes.ts
+│   │   ├── infoUser.routes.ts
+│   │   ├── inscryptionEquipe.routes.ts
+|   |
 │   ├── 📁 utils/
-│   │   ├── responseFactory.ts   # Uniformisation des réponses API
-│   │   ├── errorFactory.ts      # Gestion cohérente des erreurs
 │   │   ├── jwt.ts               # Fonctions liées aux tokens
-│   │   ├── password.ts          # Hash / vérification via Argon2
-│   │   └── logger.ts            # Journalisation personnalisée
 │   │
 │   ├── 📁 types/
 │   │   ├── express.d.ts         # Extension des types Express (si besoin)
@@ -51,10 +39,6 @@
 │   ├── app.ts                   # Initialisation d’Express + middlewares globaux
 │   ├── routes.ts                # Point central des routes (import des modules)
 │   └── server.ts                # Point d’entrée du serveur
-│
-├── 📁 prisma/
-│   ├── schema.prisma            # Schéma Prisma
-│   └── migrations/              # Générées automatiquement
 │
 ├── .env                         # Variables d’environnement
 ├── fichiers de config à ne pas toucher
@@ -86,16 +70,33 @@ Après un `git pull` :
 npm install
 ```
 
-Créer un fichier `.env` avec à l’intérieur :
+Créer un fichier `.env` à la racine du projet avec à l’intérieur :
 
 ```env
-DATABASE_URL="postgresql://postgres:le_mot_de_passe/vamd_corp_database?schema=public"
+JWT_SECRET="ceci_est_une_clef_secrete_pour_jwt"
+ADMIN_PASSWORD="admin123"
+
+JWT_EXPIRES_IN="1h"
+PORT=4000
+DATABASE_URL="postgresql://postgres:votreMotsDePasse@localhost:5432/vamd_corp_database?schema=public"
+FRONTEND_URL="http://localhost:5173"
+MODE_PRODUCTION="development"   //"production" si vous l'avez déployer sur le server
 ```
 
 Pour démarrer le serveur en local :
 
 ```bash
+npm install
+npm run migrate
+npm run generate
+npm run seed
 npm run dev
+```
+
+Pour démarrer sur un server :
+
+```bash
+npm install  && npm run migrate:force && npm run generate && npm run seed && npm run build
 ```
 
 Avant de pousser votre code, exécutez :
@@ -156,16 +157,6 @@ Coller ensuite dans votre `.env` :
 DATABASE_URL="postgresql://postgres:mettreIciLeMdp@localhost:5432/vamd_corp_database?schema=public"
 ```
 
-Commandes pour lancer le projet :
-
-```bash
-npm install
-npx prisma migrate dev --name init
-npx prisma generate
-npm run dev
-```
-
 ## 👑 Notes finales
 
-Même si personne ne lit jamais ce README… au moins tu as un guide complet pour ton projet 😎  
-Tatakae ! ⚡
+ce projet a été fait dans le cadre du cours de PGL en équipe de 4
