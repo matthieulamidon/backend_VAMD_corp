@@ -104,6 +104,11 @@ export async function register(req: Request, res: Response) {
 /* login: permet de generer cookie d'authentification */
 export async function login(req: Request, res: Response) {
   const { emailOrPseudo, password } = req.body;
+  console.log(
+    "Tentative de connexion avec ces informations:",
+    emailOrPseudo,
+    password
+  );
 
   if (!emailOrPseudo || !password) {
     return res.status(400).json({
@@ -177,7 +182,7 @@ export async function me(req: Request, res: Response) {
       req
     );
     const decoded = verifyAuthCookie(req);
-    res.json({ message: "Bienvenue !", user: decoded });
+    res.status(200).json({ message: "Bienvenue !", user: decoded });
   } catch {
     res.status(401).json({ message: "Non autorisé" });
   }
