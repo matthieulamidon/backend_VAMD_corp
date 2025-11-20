@@ -156,7 +156,7 @@ export async function login(req: Request, res: Response) {
       pseudo: user.pseudo,
     });
 
-    return res.json({
+    return res.status(201).json({
       token,
       tokenCookies,
       user: {
