@@ -25,6 +25,7 @@ enum JeuxEquipe {
 }
 
 enum Poste {
+  COACH
   FORTNITE // IL N'y a pas de roles car ce jeu manque de stratégie  
   TOPLANER // LOL
   MIDLANER // LOL
@@ -43,6 +44,7 @@ enum SousRole {
   REMPLACANT
   COACH
   CHEFDEQUIPE
+  MEMBRE
   INSCRIPTION // dans le process d'INSCRIPTION il seul le coach le voie
 }
 

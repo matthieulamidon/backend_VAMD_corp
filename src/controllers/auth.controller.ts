@@ -175,12 +175,12 @@ export async function login(req: Request, res: Response) {
 /* me: verifie le cookie d'authentification */
 export async function me(req: Request, res: Response) {
   try {
-    console.log(
+    /*console.log(
       "Récupération des informations de l'utilisateur pour la requête:",
       //req.method,
       //req.url,
       req
-    );
+    );*/
     const decoded = verifyAuthCookie(req);
     res.status(200).json({ message: "Bienvenue !", user: decoded });
   } catch {
