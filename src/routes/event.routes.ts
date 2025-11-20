@@ -1,5 +1,5 @@
 import { Router } from "express";
-// eslint-disable-next-line prettier/prettier
+
 import {
   createEvent,
   getEvents,

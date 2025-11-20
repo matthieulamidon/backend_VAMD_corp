@@ -29,7 +29,7 @@ export const startServer = () => {
   app.use("/api/gestionEquipe", gestionEquipeRoutes);
   app.use("/api/events", eventRoutes);
 
-  app.use((err: any, req: any, res: any, next: any) => {
+  app.use((err: any, req: any, res: any) => {
     console.error("🔥 Erreur capturée :", err);
     res
       .status(err.status || 500)
