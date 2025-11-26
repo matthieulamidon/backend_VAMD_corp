@@ -14,6 +14,7 @@ async function main() {
     await prisma.droit.createMany({
       data: [
         { droit: DroitEnum.ADMIN },
+        { droit: DroitEnum.PATRON },
         { droit: DroitEnum.COACH },
         { droit: DroitEnum.JOUEUR },
         { droit: DroitEnum.USER },
