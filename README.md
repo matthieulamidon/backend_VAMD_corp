@@ -160,3 +160,9 @@ DATABASE_URL="postgresql://postgres:mettreIciLeMdp@localhost:5432/vamd_corp_data
 ## 👑 Notes finales
 
 ce projet a été fait dans le cadre du cours de PGL en équipe de 4
+
+voici la commande custom
+
+```
+npm run dave
+```

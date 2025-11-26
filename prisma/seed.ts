@@ -9,7 +9,7 @@ async function main() {
   const droitCount = await prisma.droit.count();
 
   if (droitCount === 0) {
-    console.log('🌱 Aucun droit trouvé, création des 4 droits de base...');
+    console.log('🌱 Aucun droit trouvé, création des 5 droits de base...');
 
     await prisma.droit.createMany({
       data: [
@@ -123,7 +123,7 @@ async function main() {
         email: 'patron1@gmail.com',
         password: await argon2.hash('patron123'),
         sexe: 'HOMME',
-        id_droit: (await prisma.droit.findFirst({ where: { droit: DroitEnum.COACH } }))!.id_droit,
+        id_droit: (await prisma.droit.findFirst({ where: { droit: DroitEnum.PATRON } }))!.id_droit,
         description: 'et oui il est le patron de free ',
       },
     });
