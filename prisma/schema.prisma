@@ -50,6 +50,7 @@ enum SousRole {
 
 enum DroitEnum {
   ADMIN
+  PATRON
   COACH
   JOUEUR
   USER

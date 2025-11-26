@@ -59,6 +59,74 @@ async function main() {
       },
     });
 
+    /* Création d'un utilisateur coach et un joueur par défaut avec une équipe */
+    await prisma.user.create({
+      data: {
+        pseudo: 'coach1',
+        nom: 'Coach',
+        prenom: 'Premier',
+        date_naissance: new Date('1995-05-20'),
+        email: 'coach@gmail.com',
+        password: await argon2.hash('coach123'),
+        sexe: 'HOMME',
+        id_droit: (await prisma.droit.findFirst({ where: { droit: DroitEnum.COACH } }))!.id_droit,
+        description: 'Coach dévoué pour les équipes de league of legends',
+      },
+    });
+
+    await prisma.equipe.create({
+      data: {
+        nom_equipe: 'Team Alpha',
+        jeux_equipe: 'LEAGUEOFLEGENDES',
+      },    
+    });
+
+    await prisma.userEquipe.create({
+      data: {
+        id_user: (await prisma.user.findFirst({ where: { pseudo: 'coach1' } }))!.id_user,
+        id_equipe: (await prisma.equipe.findFirst({ where: { nom_equipe: 'Team Alpha' } }))!.id_equipe,
+        poste    : 'COACH',
+        sous_role : 'COACH',
+      },    
+    });
+
+    await prisma.user.create({
+      data: {
+        pseudo: 'player1',
+        nom: 'Player',
+        prenom: 'Premier',
+        date_naissance: new Date('2000-03-15'),
+        email: 'player1@gmail.com',
+        password: await argon2.hash('player123'),
+        sexe: 'FEMME',
+        id_droit: (await prisma.droit.findFirst({ where: { droit: DroitEnum.JOUEUR } }))!.id_droit,
+        description: 'Joueuse passionnée de league of legends',
+      },
+    });
+
+    await prisma.userEquipe.create({
+      data: {
+        id_user: (await prisma.user.findFirst({ where: { pseudo: 'player1' } }))!.id_user,
+        id_equipe: (await prisma.equipe.findFirst({ where: { nom_equipe: 'Team Alpha' } }))!.id_equipe,
+        poste    : 'COACH',
+        sous_role : 'COACH',
+      },    
+    });
+    
+    await prisma.user.create({
+      data: {
+        pseudo: 'patron1',
+        nom: 'xavier',
+        prenom: 'niel',
+        date_naissance: new Date('1995-05-20'),
+        email: 'patron1@gmail.com',
+        password: await argon2.hash('patron123'),
+        sexe: 'HOMME',
+        id_droit: (await prisma.droit.findFirst({ where: { droit: DroitEnum.COACH } }))!.id_droit,
+        description: 'et oui il est le patron de free ',
+      },
+    });
+
     console.log('Utilisateur administrateur créé avec succès !');
   } else {
     console.log('Des utilisateurs existent déjà, aucune création d\'admin nécessaire.');
