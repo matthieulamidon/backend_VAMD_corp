@@ -8,6 +8,7 @@ import gestionEquipeRoutes from "./routes/gestionEquipe.routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import eventRoutes from "./routes/event.routes";
+import managmentEquipeRoutes from "./routes/managmentEquipe.routes";
 
 export const startServer = () => {
   const app = express();
@@ -28,6 +29,7 @@ export const startServer = () => {
   app.use("/api/equipeInscryption", inscryptionEquipeRoutes);
   app.use("/api/gestionEquipe", gestionEquipeRoutes);
   app.use("/api/events", eventRoutes);
+  app.use("/api/managmentEquipe", managmentEquipeRoutes);
 
   app.use((err: any, req: any, res: any) => {
     console.error("🔥 Erreur capturée :", err);

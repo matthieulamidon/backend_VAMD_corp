@@ -109,8 +109,8 @@ async function main() {
       data: {
         id_user: (await prisma.user.findFirst({ where: { pseudo: 'player1' } }))!.id_user,
         id_equipe: (await prisma.equipe.findFirst({ where: { nom_equipe: 'Team Alpha' } }))!.id_equipe,
-        poste    : 'COACH',
-        sous_role : 'COACH',
+        poste    : 'TOPLANER',
+        sous_role : 'TITULAIRE',
       },    
     });
     
