@@ -294,11 +294,9 @@ export async function updateEvent(req: Request, res: Response) {
     if (!existingEvent)
       return res.status(404).json({ message: "Événement introuvable" });
     if (existingEvent.id_user !== decoded.userId)
-      return res
-        .status(403)
-        .json({
-          message: "Vous ne pouvez modifier que vos propres événements",
-        });
+      return res.status(403).json({
+        message: "Vous ne pouvez modifier que vos propres événements",
+      });
 
     const start = date_heure_debut
       ? new Date(date_heure_debut)

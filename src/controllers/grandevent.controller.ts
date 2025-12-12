@@ -83,15 +83,20 @@ export async function updateGrandEvent(req: Request, res: Response) {
       where: { id: Number(id) },
     });
 
-    if (!existing) return res.status(404).json({ message: "Événement introuvable" });
+    if (!existing)
+      return res.status(404).json({ message: "Événement introuvable" });
 
     const updated = await prisma.grandEvenement.update({
       where: { id: Number(id) },
       data: {
         titre: titre ?? existing.titre,
         type_event: type_event ?? existing.type_event,
-        date_heure_debut: date_heure_debut ? new Date(date_heure_debut) : existing.date_heure_debut,
-        date_heure_fin: date_heure_fin ? new Date(date_heure_fin) : existing.date_heure_fin,
+        date_heure_debut: date_heure_debut
+          ? new Date(date_heure_debut)
+          : existing.date_heure_debut,
+        date_heure_fin: date_heure_fin
+          ? new Date(date_heure_fin)
+          : existing.date_heure_fin,
         lieu: lieu ?? existing.lieu,
         description: description ?? existing.description,
         org_logo: org_logo ?? existing.org_logo,
@@ -116,7 +121,8 @@ export async function deleteGrandEvent(req: Request, res: Response) {
       where: { id: Number(id) },
     });
 
-    if (!existing) return res.status(404).json({ message: "Événement introuvable" });
+    if (!existing)
+      return res.status(404).json({ message: "Événement introuvable" });
 
     await prisma.grandEvenement.delete({ where: { id: Number(id) } });
 
