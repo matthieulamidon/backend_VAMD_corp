@@ -3,8 +3,6 @@ import { Request, Response } from "express";
 import prisma from "../prisma";
 import { JeuxEquipe, Poste } from "@prisma/client";
 
-// TODO: créé les routes administrateur pour la gestion des équipes
-
 /* CreateEquipe: fonction qui permet de créé une équipe */
 export async function CreateEquipe(req: Request, res: Response) {
   const { nom_equipe, jeux_equipe } = req.body;

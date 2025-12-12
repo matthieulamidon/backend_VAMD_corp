@@ -84,6 +84,8 @@ export async function completeProfile(req: Request, res: Response) {
 
 /* inscryptionEquipe: permet d'inscrire un utilisateur dans une équipe */
 export async function inscryptionEquipe(req: Request, res: Response) {
+  console.log("inscryptionEquipe called");
+
   let userData: any;
   userData = isAuthantificate(req);
   if (userData.message) {

@@ -42,6 +42,7 @@ export async function getAllEquipeOfPlayer(req: Request, res: Response) {
 // Fonction utilitaire pour transformer l'ENUM Prisma en clé pour le Frontend
 const mapPosteToKey = (posteEnum: string): string => {
   switch (posteEnum) {
+    // VALORANT
     case "DUELISTS":
       return "duelist";
     case "SENTINELS":
@@ -52,7 +53,7 @@ const mapPosteToKey = (posteEnum: string): string => {
       return "controller";
     case "POLYVALENT":
       return "flex";
-    // Pour LOL si besoin plus tard :
+    // LOL
     case "TOPLANER":
       return "top";
     case "MIDLANER":
@@ -68,6 +69,7 @@ const mapPosteToKey = (posteEnum: string): string => {
   }
 };
 
+/* getAllDemandeEquipe: fonction qui permet de récupérer toute les demandes d'insciption Pour une équipe */
 export async function getJoueurEquipePosition(req: Request, res: Response) {
   console.log("Requête reçue pour getJoueurEquipePosition avec le body :");
   const { equipe_name } = req.body;
@@ -170,11 +172,13 @@ interface PlayerUpdate {
   sous_role: string; // ex: "TITULAIRE"
 }
 
+// oui j'ai demandé à chatgpt de m'écrire ça :'( car je commence a manquer de temps
+
 // Fonction utilitaire pour convertir les strings du front vers l'Enum Prisma
 // (Car le front envoie souvent "duelist" mais la BDD veut "DUELISTS")
 const normalizePoste = (val: string): Poste => {
   const upper = val.toUpperCase();
-  // Mapping manuel si tes enums sont spécifiques (ex: DUELISTS avec S)
+  // VALORANT
   if (upper.includes("DUELIST")) return "DUELISTS";
   if (upper.includes("SENTINEL")) return "SENTINELS";
   if (upper.includes("INITIATOR")) return "INITIATORS";
@@ -186,12 +190,12 @@ const normalizePoste = (val: string): Poste => {
   if (upper === "MID" || upper === "MIDLANER") return "MIDLANER";
   if (upper === "ADC" || upper === "BOT" || upper === "BOTLANER")
     return "BOTLANER";
-  if (upper === "SUP" || upper === "SUPPORT") return "SUPORT"; // Attention à l'orthographe de ton Enum 'SUPORT'
+  if (upper === "SUP" || upper === "SUPPORT") return "SUPORT"; // je suis désolé pour cette faute d'orthographe mais j'ai la flemme de tout renommer
 
-  // Par défaut, on tente de caster brutalement si ça match (ex: COACH)
   return upper as Poste;
 };
 
+// Fonction utilitaire pour convertir les strings du front vers l'Enum Prisma
 const normalizeSousRole = (val: string): SousRole => {
   const upper = val.toUpperCase();
   if (upper === "MAIN" || upper === "TITULAIRE") return "TITULAIRE";
@@ -201,6 +205,7 @@ const normalizeSousRole = (val: string): SousRole => {
   return "MEMBRE";
 };
 
+/* updateEquipePositions: fonction qui permet de mettre à jour les postes et rôles des joueurs dans une équipe */
 export async function updateEquipePositions(req: Request, res: Response) {
   const {
     equipe_name,
