@@ -87,10 +87,12 @@ model User {
   updatedAt      DateTime  @updatedAt
 
   // Relations
-  droit            Droit?            @relation(fields: [id_droit], references: [id_droit])
-  participations   Participation[]
-  userEquipes      UserEquipe[]
-  evenements       Evenement[]       @relation("EvenementCoach")
+  droit                Droit?          @relation(fields: [id_droit], references: [id_droit])
+  participations       Participation[]
+  userEquipes          UserEquipe[]
+  evenements           Evenement[]     @relation("EvenementCoach")
+  commentairesCoachees Commentaire[]   @relation("CoachCommentaires")
+  commentairesJouees   Commentaire[]   @relation("JoueurCommentaires")
   inscriptionCoach InscriptionCoach? @relation("UserInscription")
 
   @@map("user")
@@ -102,7 +104,6 @@ model Droit {
   droit    DroitEnum
   id_event Int?
 
-  // Relations
   event Evenement? @relation(fields: [id_event], references: [id_event])
   users User[]
 
@@ -154,8 +155,24 @@ model Evenement {
   droits              Droit[]
   participations      Participation[]
   participationEquipe ParticipationEquipe[]
+  commentaires        Commentaire[]         @relation("EvenementCommentaires")
 
   @@map("evenement")
+}
+
+model GrandEvenement {
+  id               Int      @id @default(autoincrement())
+  titre            String
+  type_event       String
+  date_heure_debut DateTime
+  date_heure_fin   DateTime
+  lieu             String?
+  description      String?
+  org_logo         String?
+  game_logo        String?
+  prize            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 // ---- TABLE Participation (User ↔ Evenement) ----
@@ -196,4 +213,20 @@ model InscriptionCoach {
 
   @@id([id_user])
   @@map("inscription_coach")
+}
+
+model Commentaire {
+  id_commentaire   Int      @id @default(autoincrement())
+  id_coach         Int
+  id_joueur        Int
+  id_event         Int?
+  kds              String
+  presence         Boolean  @default(true)
+  date_commentaire DateTime @default(now())
+
+  coach  User       @relation("CoachCommentaires", fields: [id_coach], references: [id_user])
+  joueur User       @relation("JoueurCommentaires", fields: [id_joueur], references: [id_user])
+  event  Evenement? @relation("EvenementCommentaires", fields: [id_event], references: [id_event])
+
+  @@map("commentaire")
 }
