@@ -7,6 +7,8 @@ import inscryptionEquipeRoutes from "./routes/inscryptionEquipe.routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import eventRoutes from "./routes/event.routes";
+import grandEventRoutes from "./routes/grandevent.route";
+import commentaireRoutes from "./routes/commentaire.routes";
 
 export const startServer = () => {
   const app = express();
@@ -26,6 +28,8 @@ export const startServer = () => {
   app.use("/api/user", infoUserRoutes);
   app.use("/api/equipeInscryption", inscryptionEquipeRoutes);
   app.use("/api/events", eventRoutes);
+  app.use("/api", commentaireRoutes);
+  app.use("/api", grandEventRoutes);
 
   app.use((err: any, req: any, res: any, next: any) => {
     console.error("🔥 Erreur capturée :", err);

@@ -1,27 +1,23 @@
 import { Router } from "express";
-// eslint-disable-next-line prettier/prettier
 import {
   createEvent,
-  getEvents,
-  getCoachEvents,
-  getEventById,
+  getUserEvents,
+  deleteEventById,
+  updateEvent,
 } from "../controllers/event.controller";
-import { verifyAuthCookie } from "../utils/jwt";
 
 const router = Router();
 
-// Récupérer tous les événements pour le calendrier
-router.get("/events", getEvents);
+// CREATE EVENT
+router.post("/event", createEvent);
 
-// Récupérer les événements du coach connecté
-router.get("/events/me", verifyAuthCookie, getCoachEvents);
+// GET EVENTS FOR THE CONNECTED USER
+router.get("/event", getUserEvents);
 
-// Récupérer un événement précis par son ID
-router.get("/events/:id", getEventById);
+// UPDATE EVENT
+router.put("/event/:id", updateEvent);
 
-//  Créer un événement (réservé aux coachs)
-// Pour test rapide
-
-router.post("/events", createEvent);
+// DELETE EVENT
+router.delete("/event/:id", deleteEventById);
 
 export default router;

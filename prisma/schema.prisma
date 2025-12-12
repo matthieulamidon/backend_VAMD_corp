@@ -15,6 +15,7 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
 // ========================= ENUMS =========================
 
 enum JeuxEquipe {
@@ -24,16 +25,16 @@ enum JeuxEquipe {
 }
 
 enum Poste {
-  FORTNITE   // IL N'y a pas de roles car ce jeu manque de stratégie  
-  TOPLANER   // LOL
-  MIDLANER   // LOL
-  BOTLANER   // LOL
-  JUNGLER    // LOL
-  SUPORT     // LOL
-  DUELISTS   // VALO
-  SENTINELS  // VALO
+  FORTNITE // IL N'y a pas de roles car ce jeu manque de stratégie  
+  TOPLANER // LOL
+  MIDLANER // LOL
+  BOTLANER // LOL
+  JUNGLER // LOL
+  SUPORT // LOL
+  DUELISTS // VALO
+  SENTINELS // VALO
   INITIATORS // VALO
-  CONTROLLERS// VALO 
+  CONTROLLERS // VALO 
   POLYVALENT // VALO il y a quatre roles dans valo mais 5 joueur dont un qui change de role en fonction de la map
 }
 
@@ -68,46 +69,48 @@ enum Icone {
 
 // ---- TABLE User ----
 model User {
-  id_user         Int        @id @default(autoincrement())
-  nom             String?     
-  prenom          String?     
-  date_naissance  DateTime
-  email           String     @unique
-  password        String     
-  sexe            SexeEnum?
-  pseudo          String     @unique
-  id_droit        Int?
-  icone           Icone      @default(AVATAR1)
-  description     String?    
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id_user        Int       @id @default(autoincrement())
+  nom            String?
+  prenom         String?
+  date_naissance DateTime
+  email          String    @unique
+  password       String
+  sexe           SexeEnum?
+  pseudo         String    @unique
+  id_droit       Int?
+  icone          Icone     @default(AVATAR1)
+  description    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   // Relations
-  droit           Droit?     @relation(fields: [id_droit], references: [id_droit])
-  participations  Participation[]
-  userEquipes     UserEquipe[]
-  evenements      Evenement[] @relation("EvenementCoach")
+  droit                Droit?          @relation(fields: [id_droit], references: [id_droit])
+  participations       Participation[]
+  userEquipes          UserEquipe[]
+  evenements           Evenement[]     @relation("EvenementCoach")
+  commentairesCoachees Commentaire[]   @relation("CoachCommentaires")
+  commentairesJouees   Commentaire[]   @relation("JoueurCommentaires")
 
   @@map("user")
 }
 
 // ---- TABLE Droit ----
 model Droit {
-  id_droit   Int     @id @default(autoincrement())
-  droit      DroitEnum
-  id_event   Int?
+  id_droit Int       @id @default(autoincrement())
+  droit    DroitEnum
+  id_event Int?
 
   // Relations
-  event      Evenement? @relation(fields: [id_event], references: [id_event])
-  users      User[]
+  event Evenement? @relation(fields: [id_event], references: [id_event])
+  users User[]
 
   @@map("droit")
 }
 
 // ---- TABLE Equipe ----
 model Equipe {
-  id_equipe    Int         @id @default(autoincrement())
-  nom_equipe   String      @unique
+  id_equipe    Int        @id @default(autoincrement())
+  nom_equipe   String     @unique
   jeux_equipe  JeuxEquipe
   score_equipe Int?
 
@@ -120,10 +123,10 @@ model Equipe {
 
 // ---- TABLE User_Equipe (association User ↔ Equipe) ----
 model UserEquipe {
-  id_user    Int
-  id_equipe  Int
-  poste      Poste
-  sous_role  SousRole?
+  id_user   Int
+  id_equipe Int
+  poste     Poste
+  sous_role SousRole?
 
   // Relations
   user   User   @relation(fields: [id_user], references: [id_user])
@@ -135,22 +138,38 @@ model UserEquipe {
 
 // ---- TABLE Evenement ----
 model Evenement {
-  id_event         Int       @id @default(autoincrement())
-  type_event       String    
+  id_event         Int      @id @default(autoincrement())
+  type_event       String
   date_heure_debut DateTime
   date_heure_fin   DateTime
-  lieu             String    
-  description      String?   
-  titre_event      String    
-  id_user          Int?      
+  lieu             String
+  description      String?
+  titre_event      String
+  id_user          Int?
 
   // Relations
-  coach            User?     @relation("EvenementCoach", fields: [id_user], references: [id_user])
-  droits           Droit[]
-  participations   Participation[]
+  coach               User?                 @relation("EvenementCoach", fields: [id_user], references: [id_user])
+  droits              Droit[]
+  participations      Participation[]
   participationEquipe ParticipationEquipe[]
+  commentaires        Commentaire[]         @relation("EvenementCommentaires")
 
   @@map("evenement")
+}
+
+model GrandEvenement {
+  id               Int      @id @default(autoincrement())
+  titre            String
+  type_event       String
+  date_heure_debut DateTime
+  date_heure_fin   DateTime
+  lieu             String?
+  description      String?
+  org_logo         String?
+  game_logo        String?
+  prize            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 // ---- TABLE Participation (User ↔ Evenement) ----
@@ -160,8 +179,8 @@ model Participation {
   droit    DroitEnum
 
   // Relations
-  user     User      @relation(fields: [id_user], references: [id_user])
-  event    Evenement @relation(fields: [id_event], references: [id_event])
+  user  User      @relation(fields: [id_user], references: [id_user])
+  event Evenement @relation(fields: [id_event], references: [id_event])
 
   @@id([id_event, id_user])
   @@map("participation")
@@ -178,4 +197,20 @@ model ParticipationEquipe {
 
   @@id([id_equipe, id_event])
   @@map("participation_equipe")
+}
+
+model Commentaire {
+  id_commentaire   Int      @id @default(autoincrement())
+  id_coach         Int
+  id_joueur        Int
+  id_event         Int?
+  kds              String
+  presence         Boolean  @default(true)
+  date_commentaire DateTime @default(now())
+
+  coach  User       @relation("CoachCommentaires", fields: [id_coach], references: [id_user])
+  joueur User       @relation("JoueurCommentaires", fields: [id_joueur], references: [id_user])
+  event  Evenement? @relation("EvenementCommentaires", fields: [id_event], references: [id_event])
+
+  @@map("commentaire")
 }
