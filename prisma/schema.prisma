@@ -93,10 +93,6 @@ model User {
   evenements           Evenement[]     @relation("EvenementCoach")
   commentairesCoachees Commentaire[]   @relation("CoachCommentaires")
   commentairesJouees   Commentaire[]   @relation("JoueurCommentaires")
-  droit            Droit?            @relation(fields: [id_droit], references: [id_droit])
-  participations   Participation[]
-  userEquipes      UserEquipe[]
-  evenements       Evenement[]       @relation("EvenementCoach")
   inscriptionCoach InscriptionCoach? @relation("UserInscription")
 
   @@map("user")
@@ -108,9 +104,6 @@ model Droit {
   droit    DroitEnum
   id_event Int?
 
-  // Relations
-  event Evenement? @relation(fields: [id_event], references: [id_event])
-  users User[]
   event Evenement? @relation(fields: [id_event], references: [id_event])
   users User[]
 
@@ -119,8 +112,6 @@ model Droit {
 
 // ---- TABLE Equipe ----
 model Equipe {
-  id_equipe    Int        @id @default(autoincrement())
-  nom_equipe   String     @unique
   id_equipe    Int        @id @default(autoincrement())
   nom_equipe   String     @unique
   jeux_equipe  JeuxEquipe
@@ -139,10 +130,6 @@ model UserEquipe {
   id_equipe Int
   poste     Poste
   sous_role SousRole?
-  id_user   Int
-  id_equipe Int
-  poste     Poste
-  sous_role SousRole?
 
   // Relations
   user   User   @relation(fields: [id_user], references: [id_user])
@@ -156,23 +143,14 @@ model UserEquipe {
 model Evenement {
   id_event         Int      @id @default(autoincrement())
   type_event       String
-  id_event         Int      @id @default(autoincrement())
-  type_event       String
   date_heure_debut DateTime
   date_heure_fin   DateTime
   lieu             String
   description      String?
   titre_event      String
   id_user          Int?
-  lieu             String
-  description      String?
-  titre_event      String
-  id_user          Int?
 
   // Relations
-  coach               User?                 @relation("EvenementCoach", fields: [id_user], references: [id_user])
-  droits              Droit[]
-  participations      Participation[]
   coach               User?                 @relation("EvenementCoach", fields: [id_user], references: [id_user])
   droits              Droit[]
   participations      Participation[]
@@ -204,8 +182,6 @@ model Participation {
   droit    DroitEnum
 
   // Relations
-  user  User      @relation(fields: [id_user], references: [id_user])
-  event Evenement @relation(fields: [id_event], references: [id_event])
   user  User      @relation(fields: [id_user], references: [id_user])
   event Evenement @relation(fields: [id_event], references: [id_event])
 

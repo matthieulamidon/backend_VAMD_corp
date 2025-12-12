@@ -3,6 +3,7 @@ import {
   createEvent,
   getUserEvents,
   deleteEventById,
+  getPublicEvents,
   updateEvent,
 } from "../controllers/event.controller";
 
@@ -19,5 +20,7 @@ router.put("/event/:id", updateEvent);
 
 // DELETE EVENT
 router.delete("/event/:id", deleteEventById);
+// GET PUBLIC EVENTS (accessible à tous)
+router.get("/public", getPublicEvents);
 
 export default router;

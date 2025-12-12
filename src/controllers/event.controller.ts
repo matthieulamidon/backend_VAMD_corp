@@ -31,7 +31,7 @@ export async function createEvent(req: Request, res: Response) {
     }
 
     // ⚠️ adapte ce test à la valeur réelle de ton rôle COACH en base (id_droit)
-    if (decoded.role !== 1) {
+    if (decoded.role !== 3) {
       return res
         .status(403)
         .json({ message: "Accès refusé : rôle COACH requis" });
@@ -311,5 +311,28 @@ export async function updateEvent(req: Request, res: Response) {
   } catch (err) {
     console.error("updateEvent error:", err);
     return res.status(500).json({ message: "Erreur serveur lors de la modification" });
+  }
+}
+
+// ------------------- GET ALL PUBLIC EVENTS -------------------
+export async function getPublicEvents(req: Request, res: Response) {
+  try {
+    const events = await prisma.evenement.findMany({
+      where: {
+        participations: { none: {} }, // pas de joueurs ciblés
+        participationEquipe: { none: {} }, // pas d'équipes ciblées
+      },
+      include: {
+        coach: { select: { pseudo: true, email: true } },
+        participations: { select: { user: { select: { pseudo: true } } } },
+        participationEquipe: { select: { equipe: { select: { nom_equipe: true } } } },
+      },
+      orderBy: { date_heure_debut: "asc" },
+    });
+
+    return res.json(events);
+  } catch (err) {
+    console.error("getPublicEvents error:", err);
+    return res.status(500).json({ message: "Erreur serveur" });
   }
 }
