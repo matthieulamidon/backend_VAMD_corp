@@ -9,6 +9,7 @@ import {
 
 const prisma = new PrismaClient();
 
+/* infoUser: permet de récupérer les informations de l'utilisateur connecté */
 export async function infoUser(req: Request, res: Response) {
   let userData: any;
   try {
@@ -32,6 +33,7 @@ export async function infoUser(req: Request, res: Response) {
   }
 }
 
+/* updateUser: permet de mettre à jour les informations de l'utilisateur connecté */
 export async function updateUser(req: Request, res: Response) {
   let userData: any;
   try {
@@ -93,6 +95,50 @@ export async function updateUser(req: Request, res: Response) {
     return res.status(200).json({ user: updatedUser });
   } catch (err) {
     console.error("Erreur lors de la mise à jour :", err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+}
+
+/* infoUserAndPerformance : permet de recuperer les tate de l'utilisateur et de les affichers*/
+export async function infoUserAndPerformance(req: Request, res: Response) {
+  console.log("infoUserAndPerformance called");
+  try {
+    const { nameUser, teamSelect } = req.body as {
+      nameUser?: string;
+      teamSelect?: string;
+    };
+
+    const userInfo = await prisma.user.findUnique({
+      where: { pseudo: nameUser },
+    });
+
+    const KDAStats = "10/2/5"; // Valeur fictive pour l'exemple
+    const nbDeGamesPlayed = 25; // Valeur fictive pour l'exemple
+
+    const team = await prisma.equipe.findUnique({
+      where: { nom_equipe: teamSelect },
+    });
+
+    const userTeamRelation = await prisma.userEquipe.findFirst({
+      where: {
+        id_user: userInfo?.id_user,
+        id_equipe: team?.id_equipe,
+      },
+    });
+
+    return res.status(200).json({
+      userInfo,
+      roleInTeam: userTeamRelation?.sous_role || "MEMBRE",
+      posteInTeam: userTeamRelation
+        ? userTeamRelation.poste
+        : "Aucun poste défini",
+      performance: {
+        KDA: KDAStats,
+        gamesPlayed: nbDeGamesPlayed,
+      },
+    });
+  } catch (err) {
+    console.error("Erreur lors de la récupération des informations :", err);
     return res.status(500).json({ message: "Erreur serveur" });
   }
 }

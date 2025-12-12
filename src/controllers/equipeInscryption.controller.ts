@@ -84,6 +84,8 @@ export async function completeProfile(req: Request, res: Response) {
 
 /* inscryptionEquipe: permet d'inscrire un utilisateur dans une équipe */
 export async function inscryptionEquipe(req: Request, res: Response) {
+  console.log("inscryptionEquipe called");
+
   let userData: any;
   userData = isAuthantificate(req);
   if (userData.message) {
@@ -114,6 +116,32 @@ export async function inscryptionEquipe(req: Request, res: Response) {
     });
 
     // Mettre à jour l'utilisateur avec le nom de l'équipe
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+}
+
+/* inscriptionCoatch: permet de faire postuler un utilisateur en tant que coach */
+export async function inscriptionCoach(req: Request, res: Response) {
+  let userData: any;
+  userData = isAuthantificate(req);
+  if (userData.message) {
+    return res.status(401).json({ message: userData.message });
+  }
+  try {
+    const { nameGame } = req.body;
+    if (!nameGame) {
+      return res.status(400).json({ message: "aucune jeux a été selectionné" });
+    }
+
+    await prisma.inscriptionCoach.create({
+      data: {
+        id_user: userData.userId,
+        jeu: nameGame,
+      },
+    });
+    return res.status(200).json({ message: "Inscription coach réussie" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Erreur serveur" });

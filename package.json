@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dave": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "tsx src/index.ts",
     "migrate": "prisma migrate deploy",
@@ -15,7 +16,8 @@
     "lint": "eslint . --ext .ts,.mts ",
     "lint:fix": "eslint . --ext .ts,.mts --fix",
     "format": "prettier --write .",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts",
+    "resetBDD": "npx prisma migrate reset"
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
