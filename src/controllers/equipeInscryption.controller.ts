@@ -114,6 +114,7 @@ export async function inscryptionEquipe(req: Request, res: Response) {
         sous_role: SousRole.INSCRIPTION,
       },
     });
+    return res.status(200).json({ message: "Inscription équipe réussie" });
 
     // Mettre à jour l'utilisateur avec le nom de l'équipe
   } catch (err) {
