@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   acceptDemandeCoach,
   acceptDemandeJoueur,
+  assignEquipeToUserByAdmin,
   CreateEquipe,
   DeleteEquipe,
   getAllDemandeEquipe,
@@ -24,5 +25,6 @@ router.post("/acceptDemandeJoueur", acceptDemandeJoueur);
 router.post("/acceptDemandeCoach", acceptDemandeCoach);
 router.post("/refuseDemandeJoueur", refuseDemandeJoueur);
 router.post("/refuseDemandeCoach", refuseDemandeCoach);
+router.post("/assignEquipeToUserByAdmin", assignEquipeToUserByAdmin);
 
 export default router;

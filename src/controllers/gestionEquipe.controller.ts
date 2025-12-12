@@ -290,3 +290,35 @@ export async function refuseDemandeCoach(req: Request, res: Response) {
     return res.status(500).json({ message: "Server error" });
   }
 }
+
+/* assignEquipeToUserByAdmin: permet d'assigner une équipe à un utilisateur par un admin avec le role coach */
+export async function assignEquipeToUserByAdmin(req: Request, res: Response) {
+  try {
+    const { id_user, nom_equipe } = req.body;
+    const equipe = await prisma.equipe.findUnique({
+      where: { nom_equipe: nom_equipe },
+    });
+    if (!equipe) {
+      return res.status(404).json({ message: "Équipe non trouvée" });
+    }
+    await prisma.user.update({
+      where: { id_user: id_user },
+      data: { id_droit: 3 },
+    });
+
+    await prisma.userEquipe.create({
+      data: {
+        id_user: id_user,
+        id_equipe: equipe.id_equipe,
+        poste: "COACH",
+        sous_role: "COACH",
+      },
+    });
+    return res
+      .status(200)
+      .json({ message: "Équipe assignée à l'utilisateur avec succès" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Erreur serveur" });
+  }
+}

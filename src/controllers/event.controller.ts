@@ -127,7 +127,6 @@ export async function getCoachEvents(req: Request, res: Response) {
     res.status(500).json({ message: "Erreur serveur" });
   }
 }
-
 //  Récupérer un seul événement par ID
 export async function getEventById(req: Request, res: Response) {
   try {
