@@ -28,6 +28,7 @@ export function setAuthCookie(res: Response, payload: object) {
     httpOnly: true, // inaccessible au JS
     secure: process.env.MODE_PRODUCTION === "production", // HTTPS only en production sinon false
     sameSite: process.env.MODE_PRODUCTION === "production" ? "none" : "lax", // protège CSRF lax si tu es en prod car on est sur le localhost en dev sinon none car le frontend est sur Versell et le backend sur render
+    partitioned: true,
     path: "/",
     maxAge: 60 * 60 * 1000, // 1h
   });
