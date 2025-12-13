@@ -25,6 +25,7 @@ export const startServer = () => {
       credentials: true, // les cookies
     })
   );
+  app.set("trust proxy", 1);
 
   app.use("/api/auth", authRoutes);
   app.use("/api/admin", adminRoutes);
