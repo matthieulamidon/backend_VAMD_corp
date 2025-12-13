@@ -49,5 +49,7 @@ export function clearAuthCookie(res: Response) {
     httpOnly: true,
     secure: process.env.MODE_PRODUCTION === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    partitioned: true,
+    path: "/",
   });
 }
