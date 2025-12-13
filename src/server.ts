@@ -16,6 +16,8 @@ import routesAdmin from "./routes/routesAdmin.routes";
 export const startServer = () => {
   const app = express();
 
+  app.set("trust proxy", 1);
+
   app.use(cookieParser());
   app.use(bodyParser.json());
 
@@ -25,7 +27,6 @@ export const startServer = () => {
       credentials: true, // les cookies
     })
   );
-  app.set("trust proxy", 1);
 
   app.use("/api/auth", authRoutes);
   app.use("/api/admin", adminRoutes);
