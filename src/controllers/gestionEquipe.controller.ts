@@ -195,6 +195,12 @@ export async function acceptDemandeJoueur(req: Request, res: Response) {
       where: { id_user_id_equipe: { id_user: id_user, id_equipe: id_equipe } },
       data: { sous_role: "MEMBRE" },
     });
+
+    await prisma.user.update({
+      where: { id_user: id_user },
+      data: { id_droit: 4 }, //ont lui donne les droit de Joueur
+    });
+
     return res.status(200).json({ message: "Demande acceptée avec succès" });
   } catch (err) {
     console.error(err);
@@ -225,6 +231,11 @@ export async function acceptDemandeCoach(req: Request, res: Response) {
         poste: Poste.COACH,
         sous_role: "COACH",
       },
+    });
+
+    await prisma.user.update({
+      where: { id_user: id_user },
+      data: { id_droit: 3 }, //ont lui donne les droit de Joueur
     });
 
     await prisma.inscriptionCoach.delete({
